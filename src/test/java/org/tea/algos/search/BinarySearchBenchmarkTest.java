@@ -34,7 +34,7 @@ public class BinarySearchBenchmarkTest {
         contextManager.prepareTestInstance(this);
 
         ApplicationContext ctx = contextManager.getTestContext().getApplicationContext();
-        binarySearch = (Searchable) ctx.getBean(BinarySearch.class);
+        binarySearch = ctx.getBean(BinarySearch.class);
 
         array = new int[arraySize];
 
