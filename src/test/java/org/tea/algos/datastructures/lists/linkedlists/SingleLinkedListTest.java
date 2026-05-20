@@ -1,4 +1,4 @@
-package org.tea.algos.datastructures.lists;
+package org.tea.algos.datastructures.lists.linkedlists;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

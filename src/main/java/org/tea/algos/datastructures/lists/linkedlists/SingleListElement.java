@@ -1,4 +1,4 @@
-package org.tea.algos.datastructures.lists;
+package org.tea.algos.datastructures.lists.linkedlists;
 
 public class SingleListElement<T> {
     T value;
