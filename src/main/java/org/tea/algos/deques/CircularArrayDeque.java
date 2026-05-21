@@ -112,10 +112,7 @@ public class CircularArrayDeque<T> implements DequeOperations<T> {
         if (size + 1 >= deque.length) {
             adjustCapacity();
         }
-        head = (head - 1) % deque.length;
-        if (head < 0) {
-            head += deque.length;
-        }
+        head = (head - 1) & (deque.length - 1);
         deque[head] = element;
         size++;
         return true;
@@ -130,7 +127,7 @@ public class CircularArrayDeque<T> implements DequeOperations<T> {
             adjustCapacity();
         }
         deque[tail] = element;
-        tail = (tail + 1) % deque.length;
+        tail = (tail + 1) & (deque.length - 1);
         size++;
         return true;
     }
@@ -139,7 +136,7 @@ public class CircularArrayDeque<T> implements DequeOperations<T> {
     public T pollFront() {
         T firstItem = deque[head];
         deque[head] = null;
-        head = (head + 1) % deque.length;
+        head = (head + 1) & (deque.length - 1);
         if (firstItem != null) {
             size--;
         }
@@ -148,10 +145,7 @@ public class CircularArrayDeque<T> implements DequeOperations<T> {
 
     @Override
     public T pollLast() {
-        int lastIndex = (tail - 1) % deque.length;
-        if (lastIndex < 0) {
-            lastIndex += deque.length;
-        }
+        int lastIndex = (tail - 1) & (deque.length - 1);
         T lastItem = deque[lastIndex];
         deque[lastIndex] = null;
         tail = lastIndex;
@@ -168,10 +162,7 @@ public class CircularArrayDeque<T> implements DequeOperations<T> {
 
     @Override
     public T peekLast() {
-        int lastIndex = (tail - 1) % deque.length;
-        if (lastIndex < 0) {
-            lastIndex += deque.length;
-        }
+        int lastIndex = (tail - 1)  & (deque.length - 1);
         return deque[lastIndex];
     }
 
