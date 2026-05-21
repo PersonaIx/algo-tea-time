@@ -68,15 +68,6 @@ import java.util.List;
  * The Goal: Track the collection's state.
  * Your Steps: Maintain a dedicated integer primitive variable (size) that increments on offers and decrements on polls. isEmpty() simply returns whether size == 0. Do not calculate size by doing tail - head, as the wrapping mechanics make this unreliable.
  * <p>
- * 8. toList()
- * <p>
- * The Goal: Flatten the circular structure into a standard linear list for testing.
- * Your Steps:
- * Create a brand-new empty list or temporary array.
- * Start a loop that runs exactly size times.
- * In each iteration, calculate the internal array index using (head + loop_index) & mask.
- * Copy that element into your linear list.
- * <p>
  * Internal Housekeeping: Resizing
  * When size == elements.length, your circular buffer is full. To resize:
  * <p>
@@ -93,7 +84,10 @@ import java.util.List;
  * @param <T>
  */
 public class CircularArrayDeque<T> implements DequeOperations<T> {
-    private final T[] deque;
+    private T[] deque;
+    private int head;
+    private int tail;
+    private int size;
 
     public CircularArrayDeque() {
         //noinspection unchecked
@@ -101,48 +95,103 @@ public class CircularArrayDeque<T> implements DequeOperations<T> {
     }
 
     public CircularArrayDeque(int capacity) {
+        if (capacity <= 0) {
+            throw new IllegalArgumentException();
+        }
+        // take only the highest bit and shift it left one time to get a power of two
+        int adjustedCapacity = Integer.highestOneBit(capacity) << 1;
         //noinspection unchecked
-        this.deque = (T[]) new Object[capacity];
+        this.deque = (T[]) new Object[adjustedCapacity];
     }
 
     @Override
     public boolean offerFront(T element) {
-        return false;
+        if (element == null) {
+            return false;
+        }
+        if (size + 1 >= deque.length) {
+            adjustCapacity();
+        }
+        head = (head - 1) % deque.length;
+        if (head < 0) {
+            head += deque.length;
+        }
+        deque[head] = element;
+        size++;
+        return true;
     }
 
     @Override
     public boolean offerLast(T element) {
-        return false;
+        if (element == null) {
+            return false;
+        }
+        if (size + 1 >= deque.length) {
+            adjustCapacity();
+        }
+        deque[tail] = element;
+        tail = (tail + 1) % deque.length;
+        size++;
+        return true;
     }
 
     @Override
     public T pollFront() {
-        return null;
+        T firstItem = deque[head];
+        deque[head] = null;
+        head = (head + 1) % deque.length;
+        if (firstItem != null) {
+            size--;
+        }
+        return firstItem;
     }
 
     @Override
     public T pollLast() {
-        return null;
+        int lastIndex = (tail - 1) % deque.length;
+        if (lastIndex < 0) {
+            lastIndex += deque.length;
+        }
+        T lastItem = deque[lastIndex];
+        deque[lastIndex] = null;
+        tail = lastIndex;
+        if (lastItem != null) {
+            size--;
+        }
+        return lastItem;
     }
 
     @Override
     public T peekFront() {
-        return null;
+        return deque[head];
     }
 
     @Override
     public T peekLast() {
-        return null;
+        int lastIndex = (tail - 1) % deque.length;
+        if (lastIndex < 0) {
+            lastIndex += deque.length;
+        }
+        return deque[lastIndex];
     }
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return size == 0;
+    }
+
+
+    private void adjustCapacity() {
+        int newSize = deque.length * 2;
+        @SuppressWarnings("unchecked")
+        T[] result = (T[]) new Object[newSize];
+        System.arraycopy(deque, 0, result, 0, deque.length);
+        this.deque = result;
     }
 
     @Override
@@ -150,15 +199,14 @@ public class CircularArrayDeque<T> implements DequeOperations<T> {
         if (isEmpty()) {
             return List.of();
         }
-        return List.of();
 
-//        @SuppressWarnings("unchecked")
-//        T[] result = (T[]) new Object[size];
-//        int mask = deque.length - 1;
-//
-//        for (int i = 0; i < size; i++) {
-//            result[i] = deque[(head + i) & mask];
-//        }
-//        return List.of(result);
+        @SuppressWarnings("unchecked")
+        T[] result = (T[]) new Object[size];
+        int mask = deque.length - 1;
+
+        for (int i = 0; i < size; i++) {
+            result[i] = deque[(head + i) & mask];
+        }
+        return List.of(result);
     }
 }
