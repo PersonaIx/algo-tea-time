@@ -15,12 +15,10 @@ public class SingleLinkedList<T> implements LinkedListOperations<T> {
         }
 
         SingleListElement<T> newHead = new SingleListElement<>(value);
-        if (head == null) {
-            head = newHead;
-        } else {
+        if (head != null) {
             newHead.next = head;
-            head = newHead;
         }
+        head = newHead;
         size++;
     }
 
