@@ -37,10 +37,13 @@ public class BinarySearchBenchmarkTest {
         binarySearch = ctx.getBean(BinarySearch.class);
 
         array = new int[arraySize];
+        for (int i = 0; i < arraySize; i++) {
+            array[i] = i * 2; // Fills the array with [0, 2, 4, 6, 8...]
+        }
 
-        targetBestCase  = array[0];
-        targetAvgCase   = array[arraySize / 2];
-        targetWorstCase = arraySize + 999;
+        targetBestCase  = array[arraySize / 2]; // The middle element (Found on step 1)
+        targetAvgCase   = array[arraySize / 4]; // A quarter of the way in (Takes multiple steps)
+        targetWorstCase = -1;                   // Not in the array (Forces it to search until the end)
     }
 
     @Test
