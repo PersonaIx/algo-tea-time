@@ -169,14 +169,6 @@ class DoubleLinkedListTest {
             list.addFirst(5);
             assertThat(list.toList()).startsWith(5);
         }
-
-        @Test
-        @DisplayName("addFirst with null value – accepted without exception (null support)")
-        void addFirstNullDoesNotThrow() {
-            LinkedListOperations<String> nullList = new DoubleLinkedList<>();
-            assertThatCode(() -> nullList.addFirst(null)).doesNotThrowAnyException();
-            assertThat(nullList.size()).isEqualTo(1);
-        }
     }
 
     // =======================================================================

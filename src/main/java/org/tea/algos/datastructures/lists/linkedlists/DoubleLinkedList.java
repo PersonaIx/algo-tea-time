@@ -11,6 +11,9 @@ public class DoubleLinkedList<T> implements LinkedListOperations<T> {
 
     @Override
     public void addFirst(T value) {
+        if (value == null) {
+            return;
+        }
         DoubleListElement<T> newHead = new DoubleListElement<>(value);
         if (head != null) {
             head.prev = newHead;
@@ -25,6 +28,9 @@ public class DoubleLinkedList<T> implements LinkedListOperations<T> {
 
     @Override
     public void addLast(T value) {
+        if (value == null) {
+            return;
+        }
 
         DoubleListElement<T> newTail = new DoubleListElement<>(value);
         if (tail != null) {
@@ -40,7 +46,7 @@ public class DoubleLinkedList<T> implements LinkedListOperations<T> {
 
     @Override
     public boolean remove(T value) {
-        if (head == null) {
+        if (head == null || value == null) {
             return false;
         }
         if (value.equals(head.value)) {
@@ -77,7 +83,7 @@ public class DoubleLinkedList<T> implements LinkedListOperations<T> {
 
     @Override
     public boolean contains(T value) {
-        if (head == null) {
+        if (head == null || value == null) {
             return false;
         }
 
