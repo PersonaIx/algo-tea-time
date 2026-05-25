@@ -7,11 +7,13 @@ import java.util.Optional;
 public class BinarySearchTree<K extends Comparable<K>, V> implements SearchTree<K, V> {
 
     private BinaryNode<K,V> root;
+    private int size;
 
     @Override
     public Optional<V> insert(K key, V value) {
         if (root == null) {
             root = new BinaryNode<>(key, value);
+            size++;
             return Optional.empty();
         }
         return insertRecursive(root, key, value);
@@ -26,12 +28,14 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements SearchTree<
         if (key.compareTo(current.key) < 0) {
             if (current.left == null) {
                 current.left = new BinaryNode<>(key, value);
+                size++;
                 return Optional.empty();
             }
             return insertRecursive(current.left, key, value);
         } else {
             if (current.right == null) {
                 current.right = new BinaryNode<>(key, value);
+                size++;
                 return Optional.empty();
             }
             return insertRecursive(current.right, key, value);
@@ -48,6 +52,7 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements SearchTree<
         if (result.deletedValue == null) {
             return Optional.empty();
         }
+        size--;
         return Optional.of(result.deletedValue);
     }
 
@@ -87,17 +92,9 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements SearchTree<
         }
     }
 
-    private BinaryNode<K, V> findMin(BinaryNode<K, V> currentNode) {
-        BinaryNode<K, V> minimum = currentNode;
-        while (minimum.left != null) {
-            minimum = minimum.left;
-        }
-        return minimum;
-    }
-
-
     @Override
     public void clear() {
+        root = null;
     }
 
     @Override
@@ -112,12 +109,36 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements SearchTree<
 
     @Override
     public Optional<Entry<K, V>> min() {
-        return Optional.empty();
+        if (root == null) {
+            return Optional.empty();
+        }
+        BinaryNode<K, V> min = findMin(root);
+        return Optional.of(new SearchTree.Entry<>(min.key, min.value));
+    }
+
+    private BinaryNode<K, V> findMin(BinaryNode<K, V> currentNode) {
+        BinaryNode<K, V> minimum = currentNode;
+        while (minimum.left != null) {
+            minimum = minimum.left;
+        }
+        return minimum;
     }
 
     @Override
     public Optional<Entry<K, V>> max() {
-        return Optional.empty();
+        if (root == null) {
+            return Optional.empty();
+        }
+        BinaryNode<K, V> min = findMax(root);
+        return Optional.of(new SearchTree.Entry<>(min.key, min.value));
+    }
+
+    private BinaryNode<K, V> findMax(BinaryNode<K, V> currentNode) {
+        BinaryNode<K, V> maximum = currentNode;
+        while (maximum.right != null) {
+            maximum = maximum.right;
+        }
+        return maximum;
     }
 
     @Override
@@ -152,12 +173,12 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements SearchTree<
 
     @Override
     public int size() {
-        return 0;
+        return this.size;
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return this.size == 0;
     }
 
     @Override
@@ -177,7 +198,7 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements SearchTree<
 
     @Override
     public void insertAll(Map<K, V> entries) {
-
+        entries.forEach(this::insert);
     }
 
     @Override
