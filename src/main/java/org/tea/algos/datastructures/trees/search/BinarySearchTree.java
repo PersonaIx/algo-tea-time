@@ -1,7 +1,7 @@
 package org.tea.algos.datastructures.trees.search;
 
-import org.tea.algos.deques.CircularArrayDeque;
-import org.tea.algos.deques.DequeOperations;
+import org.tea.algos.datastructures.deques.CircularArrayDeque;
+import org.tea.algos.datastructures.deques.DequeOperations;
 
 import java.util.*;
 

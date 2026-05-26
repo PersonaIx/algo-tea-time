@@ -1,4 +1,4 @@
-package org.tea.algos.deques;
+package org.tea.algos.datastructures.deques;
 
 import java.util.List;
 

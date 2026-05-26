@@ -3,8 +3,6 @@ package org.tea.algos.datastructures.deques;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.tea.algos.deques.DequeOperations;
-import org.tea.algos.deques.LinkedDeque;
 
 import java.util.List;
 import java.util.stream.IntStream;
