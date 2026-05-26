@@ -1,8 +1,9 @@
 package org.tea.algos.datastructures.trees.search;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import org.tea.algos.deques.CircularArrayDeque;
+import org.tea.algos.deques.DequeOperations;
+
+import java.util.*;
 
 public class BinarySearchTree<K extends Comparable<K>, V> implements SearchTree<K, V> {
 
@@ -11,6 +12,12 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements SearchTree<
 
     @Override
     public Optional<V> insert(K key, V value) {
+        if (key == null) {
+            throw new NullPointerException("key");
+        }
+        if (value == null) {
+            throw new NullPointerException("value");
+        }
         if (root == null) {
             root = new BinaryNode<>(key, value);
             size++;
@@ -44,6 +51,9 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements SearchTree<
 
     @Override
     public Optional<V> delete(K key) {
+        if (key == null) {
+            throw new NullPointerException("key");
+        }
         if (root == null) {
             return Optional.empty();
         }
@@ -95,16 +105,51 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements SearchTree<
     @Override
     public void clear() {
         root = null;
+        size = 0;
     }
 
     @Override
     public Optional<V> search(K key) {
-        return Optional.empty();
+        if (key == null) {
+            throw new NullPointerException("key");
+        }
+        return search(root, key);
+    }
+
+    private Optional<V> search(BinaryNode<K, V> currentNode, K key) {
+        if (currentNode == null) {
+            return Optional.empty();
+        }
+        if (key.compareTo(currentNode.key) == 0) {
+            return Optional.of(currentNode.value);
+        }
+        if (key.compareTo(currentNode.key) < 0) {
+            return search(currentNode.left, key);
+        } else {
+            return search(currentNode.right, key);
+        }
     }
 
     @Override
     public boolean contains(K key) {
-        return false;
+        if (key == null) {
+            return false;
+        }
+        return contains(root, key);
+    }
+
+    private boolean contains(BinaryNode<K,V> currentNode, K key) {
+        if (currentNode == null) {
+            return false;
+        }
+        if (key.compareTo(currentNode.key) == 0) {
+            return true;
+        }
+        if (key.compareTo(currentNode.key) < 0) {
+            return contains(currentNode.left, key);
+        } else {
+            return contains(currentNode.right, key);
+        }
     }
 
     @Override
@@ -143,32 +188,124 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements SearchTree<
 
     @Override
     public Optional<Entry<K, V>> floor(K key) {
-        return Optional.empty();
+        BinaryNode<K, V> node = floor(root, key);
+        if (node == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new Entry<>(node.key, node.value));
+    }
+
+    private BinaryNode<K, V> floor(BinaryNode<K, V> currentNode, K key) {
+        if (currentNode == null) {
+            return null;
+        }
+        if (currentNode.key.compareTo(key) <= 0) {
+            BinaryNode<K, V> biggerFloor = floor(currentNode.right, key);
+            if (biggerFloor != null) {
+                return biggerFloor;
+            } else {
+                return currentNode;
+            }
+        } else {
+            return floor(currentNode.left, key);
+
+        }
     }
 
     @Override
     public Optional<Entry<K, V>> ceiling(K key) {
-        return Optional.empty();
+        BinaryNode<K, V> node = ceiling(root, key);
+        if (node == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new Entry<>(node.key, node.value));
+    }
+
+    private BinaryNode<K, V> ceiling(BinaryNode<K, V> currentNode, K key) {
+        if (currentNode == null) {
+            return null;
+        }
+        if (currentNode.key.compareTo(key) >= 0) {
+            BinaryNode<K, V> smallerCeiling = ceiling(currentNode.left, key);
+            if (smallerCeiling != null) {
+                return smallerCeiling;
+            } else {
+                return currentNode;
+            }
+        } else {
+            return ceiling(currentNode.right, key);
+        }
     }
 
     @Override
     public List<Entry<K, V>> inOrder() {
-        return List.of();
+        List<Entry<K, V>> result = new ArrayList<>();
+        inOrder(root, result);
+        return Collections.unmodifiableList(result);
+    }
+
+    private void inOrder(BinaryNode<K, V> currentNode, List<Entry<K, V>> result) {
+        if (currentNode == null) {
+            return;
+        }
+        inOrder(currentNode.left, result);
+        result.add(new Entry<>(currentNode.key, currentNode.value));
+        inOrder(currentNode.right, result);
     }
 
     @Override
     public List<Entry<K, V>> preOrder() {
-        return List.of();
+        List<Entry<K, V>> result = new ArrayList<>();
+        preOrder(root, result);
+        return Collections.unmodifiableList(result);
+    }
+
+    private void preOrder(BinaryNode<K, V> currentNode, List<Entry<K, V>> result) {
+        if (currentNode == null) {
+            return;
+        }
+        result.add(new Entry<>(currentNode.key, currentNode.value));
+        preOrder(currentNode.left, result);
+        preOrder(currentNode.right, result);
     }
 
     @Override
     public List<Entry<K, V>> postOrder() {
-        return List.of();
+        List<Entry<K, V>> result = new ArrayList<>();
+        postOrder(root, result);
+        return Collections.unmodifiableList(result);
+    }
+
+    private void postOrder(BinaryNode<K, V> currentNode, List<Entry<K, V>> result) {
+        if (currentNode == null) {
+            return;
+        }
+        postOrder(currentNode.left, result);
+        postOrder(currentNode.right, result);
+        result.add(new Entry<>(currentNode.key, currentNode.value));
     }
 
     @Override
     public List<Entry<K, V>> levelOrder() {
-        return List.of();
+        if (root == null) {
+            return Collections.emptyList();
+        }
+        List<Entry<K, V>> result = new ArrayList<>();
+        // using the deque I implemented
+        DequeOperations<BinaryNode<K, V>> deque = new CircularArrayDeque<>();
+        deque.offerFront(root);
+        while (!deque.isEmpty()) {
+            BinaryNode<K, V> currentNode = deque.pollFront();
+            result.add(new Entry<>(currentNode.key, currentNode.value));
+            if (currentNode.left != null) {
+                deque.offerLast(currentNode.left);
+            }
+            if (currentNode.right != null) {
+                deque.offerLast(currentNode.right);
+            }
+        }
+
+        return Collections.unmodifiableList(result);
     }
 
     @Override
@@ -183,26 +320,90 @@ public class BinarySearchTree<K extends Comparable<K>, V> implements SearchTree<
 
     @Override
     public int height() {
-        return 0;
+        return height(root);
+    }
+
+    private int height(BinaryNode<K, V> currentNode) {
+        if (currentNode == null) {
+            return -1;
+        }
+        return 1 + Math.max(height(currentNode.left), height(currentNode.right));
     }
 
     @Override
     public boolean isValid() {
+        return isValid(root, null, null);
+    }
+
+    private boolean isValid(BinaryNode<K, V> currentNode, K lowerBound, K upperBound) {
+        if (currentNode == null) {
+            return true;
+        }
+        if (isInRange(currentNode.key, lowerBound, upperBound)) {
+            return isValid(currentNode.left, lowerBound, currentNode.key)
+                    && isValid(currentNode.right, currentNode.key, upperBound);
+        }
         return false;
+    }
+
+    private boolean isInRange(K key, K from, K to) {
+        if (from != null && to != null) {
+            return from.compareTo(key) <= 0 && to.compareTo(key) >= 0;
+        } else if (from != null) {
+            return from.compareTo(key) <= 0;
+        } else if (to != null) {
+            return to.compareTo(key) >= 0;
+        } else {
+            // both ranges are not set yet
+            return true;
+        }
     }
 
     @Override
     public boolean isBalanced() {
-        return false;
+        return isBalanced(root);
+    }
+
+    private boolean isBalanced(BinaryNode<K,V> currentNode) {
+        if (currentNode == null) {
+            return true;
+        }
+        int diff = Math.abs(height(currentNode.left) - height(currentNode.right));
+        if (diff <= 1) {
+            return isBalanced(currentNode.left) && isBalanced(currentNode.right);
+        } else {
+            return false;
+        }
     }
 
     @Override
     public void insertAll(Map<K, V> entries) {
+        if (entries == null) {
+            throw new NullPointerException("entries");
+        }
+
         entries.forEach(this::insert);
     }
 
     @Override
     public List<Entry<K, V>> rangeSearch(K from, K to) {
-        return List.of();
+        List<Entry<K, V>> result = new ArrayList<>();
+        rangeSearch(root, from, to, result);
+        return result;
+    }
+
+    private void rangeSearch(BinaryNode<K, V> currentNode, K from, K to, List<Entry<K, V>> result) {
+        if (currentNode == null) {
+            return;
+        }
+        if (from.compareTo(currentNode.key) <= 0 && to.compareTo(currentNode.key) >= 0) {
+            rangeSearch(currentNode.left, from, to, result);
+            result.add(new Entry<>(currentNode.key, currentNode.value));
+            rangeSearch(currentNode.right, from, to, result);
+        } else if (from.compareTo(currentNode.key)  <= 0) {
+            rangeSearch(currentNode.left, from, to, result);
+        } else if (to.compareTo(currentNode.key) >= 0) {
+            rangeSearch(currentNode.right, from, to, result);
+        }
     }
 }

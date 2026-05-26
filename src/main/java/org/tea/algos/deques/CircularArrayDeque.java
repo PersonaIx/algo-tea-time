@@ -54,6 +54,9 @@ public class CircularArrayDeque<T> implements DequeOperations<T> {
 
     @Override
     public T pollFront() {
+        if (isEmpty()) {
+            return null;
+        }
         T firstItem = deque[head];
         deque[head] = null;
         head = (head + 1) & (deque.length - 1);
@@ -65,6 +68,9 @@ public class CircularArrayDeque<T> implements DequeOperations<T> {
 
     @Override
     public T pollLast() {
+        if (isEmpty()) {
+            return null;
+        }
         int lastIndex = (tail - 1) & (deque.length - 1);
         T lastItem = deque[lastIndex];
         deque[lastIndex] = null;
