@@ -65,8 +65,6 @@ public interface SkipList<T extends Comparable<T>> {
     boolean contains(T element);
 
     /**
-     * Returns the number of elements currently in the skip list.
-     * This is always equal to {@link #levelSize(int) levelSize(0)}.
      *
      * @return the element count; always &ge; 0
      */
@@ -82,8 +80,6 @@ public interface SkipList<T extends Comparable<T>> {
     /**
      * Returns the smallest element in the skip list.
      *
-     * <p>The minimum is always the first node in level 0 and is retrieved
-     * in O(1) time.
      *
      * @return the minimum element
      * @throws NoSuchElementException if the skip list is empty
@@ -93,8 +89,6 @@ public interface SkipList<T extends Comparable<T>> {
     /**
      * Returns the largest element in the skip list.
      *
-     * <p>Maintained as a tail pointer updated on every {@link #add} and
-     * {@link #remove}, so retrieval is O(1).
      *
      * @return the maximum element
      * @throws NoSuchElementException if the skip list is empty
@@ -105,9 +99,6 @@ public interface SkipList<T extends Comparable<T>> {
      * Returns all elements {@code e} such that
      * {@code lo.compareTo(e) <= 0 && e.compareTo(hi) <= 0},
      * in ascending sorted order.
-     *
-     * <p>Search descends to level 0 in O(log n) then walks forward in O(k),
-     * where k is the number of elements in the range.
      *
      * @param lo the inclusive lower bound; must not be {@code null}
      * @param hi the inclusive upper bound; must not be {@code null}
@@ -123,13 +114,6 @@ public interface SkipList<T extends Comparable<T>> {
 
     /**
      * Returns the current number of levels (tower height) in the skip list.
-     *
-     * <p>A freshly constructed or cleared skip list has exactly {@code 1} level.
-     * Levels grow probabilistically as elements are added and shrink when the
-     * tallest node is removed.
-     *
-     * <p><em>This method exists to let students observe the probabilistic
-     * structure and would not appear in a production API.</em>
      *
      * @return the current level count; always &ge; 1
      */
