@@ -5,16 +5,20 @@ import java.util.Iterator;
 public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
 
     private static final float LOAD_FACTOR = 0.75f;
+    public static final int INITIAL_CAPACITY = 16;
 
     private Node<K, V>[] buckets;
-    private int size = 0;
-    private int capacity = 0;
+    private int size;
+    private int capacity;
 
     public SimpleHashMap(int initialCapacity) {
         capacity = initialCapacity;
+        //noinspection unchecked
+        buckets = (Node<K, V>[]) new Node[capacity];
     }
 
     public SimpleHashMap() {
+        this(INITIAL_CAPACITY);
     }
 
     @Override
