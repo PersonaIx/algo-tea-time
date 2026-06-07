@@ -68,7 +68,7 @@ public class ArrayList<T> implements ArrayListOperations<T> {
 
     @Override
     public void add(T value) {
-        if (array.length - 1 == size) {
+        if (array.length == size) {
             adjustCapacity();
         }
         array[size] = value;
@@ -94,13 +94,11 @@ public class ArrayList<T> implements ArrayListOperations<T> {
         if (value == null) {
             throw new IllegalArgumentException();
         }
-        int index = 0;
-
-        while (index < array.length) {
-            if (value.equals(array[index])) {
+        for (int i = 0; i < size; i++) {
+            if (value.equals(array[i])) {
                 return true;
             }
-            index++;
+            i++;
         }
         return false;
     }
