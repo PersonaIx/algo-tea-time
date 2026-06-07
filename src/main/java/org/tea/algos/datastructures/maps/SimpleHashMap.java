@@ -1,13 +1,16 @@
 package org.tea.algos.datastructures.maps;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
 
     private static final float LOAD_FACTOR = 0.75f;
     public static final int INITIAL_CAPACITY = 16;
 
-    private Node<K, V>[] buckets;
+    private Node<K, V>[] nodes;
     private int size;
     private int capacity;
 
@@ -19,7 +22,7 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
         int adjustedCapacity = Integer.highestOneBit(initialCapacity) << 1;
         this.capacity = adjustedCapacity;
         //noinspection unchecked
-        this.buckets = (Node<K, V>[]) new Node[capacity];
+        this.nodes = (Node<K, V>[]) new Node[capacity];
     }
 
     public SimpleHashMap() {
@@ -28,15 +31,29 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
 
     @Override
     public V put(K key, V value) {
+        int hash = hash(key);
+        if (capacity == size) {
+            adjustCapacity();
+        }
+        Node<K, V> node = findBucket(hash);
+        if (node != null) {
+            V oldValue = node.value;
+            node.value = value;
+            return oldValue;
+        }
+
         size++;
         return null;
     }
 
     @Override
     public V get(K key) {
-        for (Node<K, V> bucket : buckets) {
-            if (hash(key) == bucket.hash) {
-                return bucket.value;
+        int hash = hash(key);
+        for (Node<K, V> node : nodes) {
+            if (node != null) {
+                if (hash == node.hash) {
+                    return node.value;
+                }
             }
         }
         return null;
@@ -44,12 +61,19 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
 
     @Override
     public V remove(K key) {
+        int hash = hash(key);
         size--;
         return null;
     }
 
     @Override
     public boolean containsKey(K key) {
+        int hash = hash(key);
+        for (Node<K, V> node : nodes) {
+            if (node != null && hash == node.hash) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -60,14 +84,24 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
 
     @Override
     public void clear() {
+        //noinspection unchecked
+        nodes = (Node<K, V>[]) new Node[INITIAL_CAPACITY];
+        capacity = INITIAL_CAPACITY;
         size = 0;
     }
 
     @Override
-    public SimpleSet<K> keySet() {
-        return null;
+    public Set<K> keySet() {
+        Set<K> result = new HashSet<>();
+        for (Node<K, V> node : nodes) {
+            if (node != null) {
+                result.add(node.key);
+            }
+        }
+        return result;
     }
 
+    // need to implement my own iterator here, difficult?
     @Override
     public Iterator<Entry<K, V>> iterator() {
         return null;
@@ -80,6 +114,23 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
     private int hash(K key) {
         return key.hashCode() & (capacity - 1);
     }
+
+    private void adjustCapacity() {
+        capacity = capacity * 2;
+        this.nodes = Arrays.copyOf(nodes, capacity);
+    }
+
+    private Node<K, V> findBucket(int hash) {
+        for (Node<K, V> node : nodes) {
+            if (node != null) {
+                if (hash == node.hash) {
+                    return node;
+                }
+            }
+        }
+        return null;
+    }
+
 
     private static class Node<K, V> {
         final K key;

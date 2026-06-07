@@ -1,6 +1,7 @@
 package org.tea.algos.datastructures.maps;
 
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * A minimal, educational map interface.
@@ -40,7 +41,7 @@ public interface SimpleMap<K, V> extends Iterable<SimpleMap.Entry<K, V>> {
 
     void clear();
 
-    SimpleSet<K> keySet();
+    Set<K> keySet();
 
     @Override
     Iterator<Entry<K, V>> iterator();
@@ -69,10 +70,4 @@ public interface SimpleMap<K, V> extends Iterable<SimpleMap.Entry<K, V>> {
     }
 
     record ImmutableEntry<K, V>(K key, V value) implements Entry<K, V> {}
-
-    interface SimpleSet<E> extends Iterable<E> {
-        boolean contains(E element);
-        int size();
-        default boolean isEmpty() { return size() == 0; }
-    }
 }
