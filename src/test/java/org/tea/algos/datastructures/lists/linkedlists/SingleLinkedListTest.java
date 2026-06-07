@@ -20,10 +20,10 @@ class SingleLinkedListTest {
     }
 
     @Test
-    void addLastAppendsToEnd() {
-        list.addLast(1);
-        list.addLast(2);
-        list.addLast(3);
+    void addAppendsToEnd() {
+        list.add(1);
+        list.add(2);
+        list.add(3);
         assertThat(list.toList()).containsExactly(1, 2, 3);
     }
 
@@ -37,32 +37,32 @@ class SingleLinkedListTest {
 
     @Test
     void addFirstAndLastMaintainsOrder() {
-        list.addLast(2);
+        list.add(2);
         list.addFirst(1);
-        list.addLast(3);
+        list.add(3);
         assertThat(list.toList()).containsExactly(1, 2, 3);
     }
 
     @Test
     void removeDeletesExistingElement() {
-        list.addLast(1);
-        list.addLast(2);
-        list.addLast(3);
+        list.add(1);
+        list.add(2);
+        list.add(3);
         list.remove(2);
         assertThat(list.toList()).containsExactly(1, 3);
     }
 
     @Test
     void removeReturnsFalseForMissingElement() {
-        list.addLast(1);
+        list.add(1);
         assertThat(list.remove(99)).isFalse();
     }
 
     @Test
     void reverseFlipsList() {
-        list.addLast(1);
-        list.addLast(2);
-        list.addLast(3);
+        list.add(1);
+        list.add(2);
+        list.add(3);
         list.reverse();
         assertThat(list.toList()).containsExactly(3, 2, 1);
     }
@@ -112,16 +112,16 @@ class SingleLinkedListTest {
 
     @Test
     void returnsNoCycleForNormalList() {
-        list.addLast(1);
-        list.addLast(2);
-        list.addLast(3);
+        list.add(1);
+        list.add(2);
+        list.add(3);
 
         assertThat(list.hasCycle()).isFalse();
     }
 
     @Test
     void returnsNoCycleForSingleElement() {
-        list.addLast(1);
+        list.add(1);
 
         assertThat(list.hasCycle()).isFalse();
     }

@@ -34,7 +34,7 @@ public class ConcurrentSingleLinkedList<T> implements LinkedListOperations<T> {
     }
 
     @Override
-    public void addLast(T value) {
+    public void add(T value) {
         try {
             writeLock.lock();
 

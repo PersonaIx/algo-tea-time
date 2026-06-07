@@ -27,9 +27,9 @@ class ConcurrentSingleLinkedListTest {
     }
 
     @RepeatedTest(10)
-    void concurrentAddLastProducesExactElements() throws InterruptedException {
+    void concurrentaddProducesExactElements() throws InterruptedException {
         runConcurrently(() -> {
-            for (int i = 0; i < OPS_PER_THREAD; i++) list.addLast(i);
+            for (int i = 0; i < OPS_PER_THREAD; i++) list.add(i);
         });
 
         // Size must be exactly right — no lost updates
@@ -71,7 +71,7 @@ class ConcurrentSingleLinkedListTest {
         // Each thread owns a unique range — no two threads compete for the same value
         List<Integer> allValues = new ArrayList<>();
         for (int i = 0; i < TOTAL_OPS; i++) {
-            list.addLast(i);
+            list.add(i);
             allValues.add(i);
         }
 

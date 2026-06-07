@@ -27,7 +27,7 @@ public class DoubleLinkedList<T> implements LinkedListOperations<T> {
     }
 
     @Override
-    public void addLast(T value) {
+    public void add(T value) {
         if (value == null) {
             return;
         }

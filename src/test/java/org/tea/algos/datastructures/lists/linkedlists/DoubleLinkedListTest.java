@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
  *
  * Test categories (JUnit 5 @Tag):
  *   - "core"      : fundamental contract tests
- *   - "mutation"  : addFirst / addLast / remove / reverse
+ *   - "mutation"  : addFirst / add / remove / reverse
  *   - "query"     : contains / hasCycle / size / isEmpty / toList
  *   - "edge"      : empty list, single element, duplicates, nulls
  *   - "order"     : structural ordering guarantees
@@ -60,9 +60,9 @@ class DoubleLinkedListTest {
         }
 
         @Test
-        @DisplayName("list is not empty after addLast")
-        void notEmptyAfterAddLast() {
-            list.addLast(1);
+        @DisplayName("list is not empty after add")
+        void notEmptyAfteradd() {
+            list.add(1);
             assertThat(list.isEmpty()).isFalse();
         }
 
@@ -99,10 +99,10 @@ class DoubleLinkedListTest {
         }
 
         @Test
-        @DisplayName("size increments by 1 per addLast")
-        void sizeGrowsWithAddLast() {
+        @DisplayName("size increments by 1 per add")
+        void sizeGrowsWithadd() {
             for (int i = 1; i <= 5; i++) {
-                list.addLast(i);
+                list.add(i);
                 assertThat(list.size()).isEqualTo(i);
             }
         }
@@ -110,9 +110,9 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("size decrements by 1 on successful remove")
         void sizeShrinksOnRemove() {
-            list.addLast(10);
-            list.addLast(20);
-            list.addLast(30);
+            list.add(10);
+            list.add(20);
+            list.add(30);
             list.remove(20);
             assertThat(list.size()).isEqualTo(2);
         }
@@ -120,7 +120,7 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("size is unchanged on failed remove (value absent)")
         void sizeUnchangedOnFailedRemove() {
-            list.addLast(10);
+            list.add(10);
             list.remove(99);
             assertThat(list.size()).isEqualTo(1);
         }
@@ -128,9 +128,9 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("size is unchanged after reverse")
         void sizeUnchangedAfterReverse() {
-            list.addLast(1);
-            list.addLast(2);
-            list.addLast(3);
+            list.add(1);
+            list.add(2);
+            list.add(3);
             list.reverse();
             assertThat(list.size()).isEqualTo(3);
         }
@@ -164,43 +164,43 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("addFirst on non-empty list places value before existing head")
         void addFirstPlacesValueBeforeExistingHead() {
-            list.addLast(10);
-            list.addLast(20);
+            list.add(10);
+            list.add(20);
             list.addFirst(5);
             assertThat(list.toList()).startsWith(5);
         }
     }
 
     // =======================================================================
-    // addLast()
+    // add()
     // =======================================================================
     @Nested
-    @DisplayName("addLast()")
+    @DisplayName("add()")
     @Tag("mutation") @Tag("order")
-    class AddLastTests {
+    class addTests {
 
         @Test
-        @DisplayName("single addLast – element becomes head and tail")
-        void singleAddLastBecomesHeadAndTail() {
-            list.addLast(7);
+        @DisplayName("single add – element becomes head and tail")
+        void singleaddBecomesHeadAndTail() {
+            list.add(7);
             assertThat(list.toList()).containsExactly(7);
         }
 
         @Test
-        @DisplayName("multiple addLast – elements are appended (FIFO order)")
-        void multipleAddLastAppendsInFIFOOrder() {
-            list.addLast(1);
-            list.addLast(2);
-            list.addLast(3);
+        @DisplayName("multiple add – elements are appended (FIFO order)")
+        void multipleaddAppendsInFIFOOrder() {
+            list.add(1);
+            list.add(2);
+            list.add(3);
             assertThat(list.toList()).containsExactly(1, 2, 3);
         }
 
         @Test
-        @DisplayName("addLast on non-empty list places value after existing tail")
-        void addLastPlacesValueAfterExistingTail() {
+        @DisplayName("add on non-empty list places value after existing tail")
+        void addPlacesValueAfterExistingTail() {
             list.addFirst(10);
             list.addFirst(20);
-            list.addLast(99);
+            list.add(99);
             assertThat(list.toList()).endsWith(99);
         }
     }
@@ -222,24 +222,24 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("returns false when value is absent")
         void returnsFalseWhenAbsent() {
-            list.addLast(1);
-            list.addLast(2);
+            list.add(1);
+            list.add(2);
             assertThat(list.remove(99)).isFalse();
         }
 
         @Test
         @DisplayName("returns true when value is present")
         void returnsTrueWhenPresent() {
-            list.addLast(5);
+            list.add(5);
             assertThat(list.remove(5)).isTrue();
         }
 
         @Test
         @DisplayName("removes head element correctly")
         void removesHead() {
-            list.addLast(1);
-            list.addLast(2);
-            list.addLast(3);
+            list.add(1);
+            list.add(2);
+            list.add(3);
             list.remove(1);
             assertThat(list.toList()).containsExactly(2, 3);
         }
@@ -247,9 +247,9 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("removes tail element correctly")
         void removesTail() {
-            list.addLast(1);
-            list.addLast(2);
-            list.addLast(3);
+            list.add(1);
+            list.add(2);
+            list.add(3);
             list.remove(3);
             assertThat(list.toList()).containsExactly(1, 2);
         }
@@ -257,9 +257,9 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("removes middle element correctly")
         void removesMiddle() {
-            list.addLast(1);
-            list.addLast(2);
-            list.addLast(3);
+            list.add(1);
+            list.add(2);
+            list.add(3);
             list.remove(2);
             assertThat(list.toList()).containsExactly(1, 3);
         }
@@ -267,9 +267,9 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("removes only the first occurrence of a duplicate value")
         void removesFirstOccurrenceOfDuplicate() {
-            list.addLast(5);
-            list.addLast(5);
-            list.addLast(5);
+            list.add(5);
+            list.add(5);
+            list.add(5);
             list.remove(5);
             assertThat(list.size()).isEqualTo(2);
             assertThat(list.toList()).containsExactly(5, 5);
@@ -287,11 +287,11 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("list is still traversable (no broken links) after removing middle")
         void listTraversableAfterMiddleRemoval() {
-            list.addLast(1);
-            list.addLast(2);
-            list.addLast(3);
-            list.addLast(4);
-            list.addLast(5);
+            list.add(1);
+            list.add(2);
+            list.add(3);
+            list.add(4);
+            list.add(5);
             list.remove(3);
             // Verify both forward traversal integrity and size
             assertThat(list.toList())
@@ -317,33 +317,33 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("contains head element")
         void containsHead() {
-            list.addLast(10);
-            list.addLast(20);
+            list.add(10);
+            list.add(20);
             assertThat(list.contains(10)).isTrue();
         }
 
         @Test
         @DisplayName("contains tail element")
         void containsTail() {
-            list.addLast(10);
-            list.addLast(20);
+            list.add(10);
+            list.add(20);
             assertThat(list.contains(20)).isTrue();
         }
 
         @Test
         @DisplayName("contains middle element")
         void containsMiddle() {
-            list.addLast(10);
-            list.addLast(15);
-            list.addLast(20);
+            list.add(10);
+            list.add(15);
+            list.add(20);
             assertThat(list.contains(15)).isTrue();
         }
 
         @Test
         @DisplayName("does not contain absent value")
         void doesNotContainAbsent() {
-            list.addLast(10);
-            list.addLast(20);
+            list.add(10);
+            list.add(20);
             assertThat(list.contains(99)).isFalse();
         }
 
@@ -358,8 +358,8 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("contains still true when duplicate value present and one removed")
         void trueWhenDuplicatePartiallyRemoved() {
-            list.addLast(5);
-            list.addLast(5);
+            list.add(5);
+            list.add(5);
             list.remove(5);
             assertThat(list.contains(5)).isTrue();
         }
@@ -367,8 +367,8 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("contains works with String values using equals semantics")
         void containsUsesEquality() {
-            strList.addLast("hello");
-            strList.addLast("world");
+            strList.add("hello");
+            strList.add("world");
             assertThat(strList.contains(new String("hello"))).isTrue(); // not same reference
         }
     }
@@ -399,8 +399,8 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("reverse two-element list swaps elements")
         void reverseTwoElements() {
-            list.addLast(1);
-            list.addLast(2);
+            list.add(1);
+            list.add(2);
             list.reverse();
             assertThat(list.toList()).containsExactly(2, 1);
         }
@@ -408,11 +408,11 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("reverse odd-length list")
         void reverseOddLength() {
-            list.addLast(1);
-            list.addLast(2);
-            list.addLast(3);
-            list.addLast(4);
-            list.addLast(5);
+            list.add(1);
+            list.add(2);
+            list.add(3);
+            list.add(4);
+            list.add(5);
             list.reverse();
             assertThat(list.toList()).containsExactly(5, 4, 3, 2, 1);
         }
@@ -420,10 +420,10 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("reverse even-length list")
         void reverseEvenLength() {
-            list.addLast(10);
-            list.addLast(20);
-            list.addLast(30);
-            list.addLast(40);
+            list.add(10);
+            list.add(20);
+            list.add(30);
+            list.add(40);
             list.reverse();
             assertThat(list.toList()).containsExactly(40, 30, 20, 10);
         }
@@ -431,9 +431,9 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("double reverse restores original order")
         void doubleReverseIsIdentity() {
-            list.addLast(1);
-            list.addLast(2);
-            list.addLast(3);
+            list.add(1);
+            list.add(2);
+            list.add(3);
             list.reverse();
             list.reverse();
             assertThat(list.toList()).containsExactly(1, 2, 3);
@@ -442,31 +442,31 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("reverse preserves size")
         void reversePreservesSize() {
-            list.addLast(1);
-            list.addLast(2);
-            list.addLast(3);
+            list.add(1);
+            list.add(2);
+            list.add(3);
             int before = list.size();
             list.reverse();
             assertThat(list.size()).isEqualTo(before);
         }
 
         @Test
-        @DisplayName("addLast after reverse appends to new tail")
-        void addLastAfterReverseAppendsToNewTail() {
-            list.addLast(1);
-            list.addLast(2);
-            list.addLast(3);
+        @DisplayName("add after reverse appends to new tail")
+        void addAfterReverseAppendsToNewTail() {
+            list.add(1);
+            list.add(2);
+            list.add(3);
             list.reverse();            // now [3, 2, 1]
-            list.addLast(99);
+            list.add(99);
             assertThat(list.toList()).containsExactly(3, 2, 1, 99);
         }
 
         @Test
         @DisplayName("addFirst after reverse prepends to new head")
         void addFirstAfterReversePrependToNewHead() {
-            list.addLast(1);
-            list.addLast(2);
-            list.addLast(3);
+            list.add(1);
+            list.add(2);
+            list.add(3);
             list.reverse();            // now [3, 2, 1]
             list.addFirst(0);
             assertThat(list.toList()).containsExactly(0, 3, 2, 1);
@@ -497,9 +497,9 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("standard multi-element list has no cycle")
         void standardListHasNoCycle() {
-            list.addLast(1);
-            list.addLast(2);
-            list.addLast(3);
+            list.add(1);
+            list.add(2);
+            list.add(3);
             assertThat(list.hasCycle()).isFalse();
         }
 
@@ -515,7 +515,7 @@ class DoubleLinkedListTest {
             // Precondition: your implementation exposes a way to create a cycle.
             // Example (adapt to your class):
             //   YourDoublyLinkedList<Integer> concrete = (YourDoublyLinkedList<Integer>) list;
-            //   concrete.addLast(1); concrete.addLast(2); concrete.addLast(3);
+            //   concrete.add(1); concrete.add(2); concrete.add(3);
             //   concrete.createCycleForTesting(); // points tail.next → head
             //   assertThat(list.hasCycle()).isTrue();
             //
@@ -541,28 +541,28 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("toList returns a snapshot – mutations do not affect returned list")
         void toListReturnsSnapshot() {
-            list.addLast(1);
-            list.addLast(2);
+            list.add(1);
+            list.add(2);
             List<Integer> snapshot = list.toList();
-            list.addLast(3);
+            list.add(3);
             assertThat(snapshot).hasSize(2); // unchanged
         }
 
         @Test
-        @DisplayName("toList preserves insertion order (addLast)")
-        void toListPreservesAddLastOrder() {
-            list.addLast(10);
-            list.addLast(20);
-            list.addLast(30);
+        @DisplayName("toList preserves insertion order (add)")
+        void toListPreservesaddOrder() {
+            list.add(10);
+            list.add(20);
+            list.add(30);
             assertThat(list.toList()).containsExactly(10, 20, 30);
         }
 
         @Test
         @DisplayName("toList size matches size()")
         void toListSizeMatchesSizeMethod() {
-            list.addLast(1);
-            list.addLast(2);
-            list.addLast(3);
+            list.add(1);
+            list.add(2);
+            list.add(3);
             assertThat(list.toList()).hasSize(list.size());
         }
 
@@ -582,11 +582,11 @@ class DoubleLinkedListTest {
     class InteractionTests {
 
         @Test
-        @DisplayName("interleaved addFirst and addLast produce correct order")
+        @DisplayName("interleaved addFirst and add produce correct order")
         void interleavedAdds() {
-            list.addLast(2);
+            list.add(2);
             list.addFirst(1);
-            list.addLast(3);
+            list.add(3);
             list.addFirst(0);
             assertThat(list.toList()).containsExactly(0, 1, 2, 3);
         }
@@ -595,7 +595,7 @@ class DoubleLinkedListTest {
         @DisplayName("contains is false for every element after all are removed")
         void containsFalseAfterAllRemoved() {
             int[] values = {1, 2, 3, 4, 5};
-            for (int v : values) list.addLast(v);
+            for (int v : values) list.add(v);
             for (int v : values) list.remove(v);
             for (int v : values) {
                 assertThat(list.contains(v)).isFalse();
@@ -606,9 +606,9 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("reverse then remove leaves list consistent")
         void reverseThenRemove() {
-            list.addLast(1);
-            list.addLast(2);
-            list.addLast(3);
+            list.add(1);
+            list.add(2);
+            list.add(3);
             list.reverse();            // [3, 2, 1]
             list.remove(2);            // [3, 1]
             assertThat(list.toList()).containsExactly(3, 1);
@@ -618,9 +618,9 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("remove head repeatedly until empty – size and isEmpty consistent")
         void removeHeadRepeatedly() {
-            list.addLast(1);
-            list.addLast(2);
-            list.addLast(3);
+            list.add(1);
+            list.add(2);
+            list.add(3);
             List<Integer> expected = List.of(1, 2, 3);
             for (int i = 0; i < expected.size(); i++) {
                 assertThat(list.remove(expected.get(i))).isTrue();
@@ -632,9 +632,9 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("remove tail repeatedly until empty – order intact")
         void removeTailRepeatedly() {
-            list.addLast(10);
-            list.addLast(20);
-            list.addLast(30);
+            list.add(10);
+            list.add(20);
+            list.add(30);
             list.remove(30);
             list.remove(20);
             list.remove(10);
@@ -644,11 +644,11 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("alternating add/remove keeps internal pointers consistent")
         void alternatingAddRemove() {
-            list.addLast(1);
-            list.addLast(2);
+            list.add(1);
+            list.add(2);
             list.remove(1);
             list.addFirst(0);
-            list.addLast(3);
+            list.add(3);
             list.remove(2);
             assertThat(list.toList()).containsExactly(0, 3);
         }
@@ -665,9 +665,9 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("all duplicates are stored (list allows duplicates)")
         void allDuplicatesStored() {
-            list.addLast(7);
-            list.addLast(7);
-            list.addLast(7);
+            list.add(7);
+            list.add(7);
+            list.add(7);
             assertThat(list.size()).isEqualTo(3);
             assertThat(list.toList()).containsExactly(7, 7, 7);
         }
@@ -675,9 +675,9 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("remove on duplicates removes exactly one occurrence per call")
         void removeEachDuplicateOneAtATime() {
-            list.addLast(5);
-            list.addLast(5);
-            list.addLast(5);
+            list.add(5);
+            list.add(5);
+            list.add(5);
             list.remove(5);
             assertThat(list.size()).isEqualTo(2);
             list.remove(5);
@@ -698,9 +698,9 @@ class DoubleLinkedListTest {
         private static final int N = 10_000;
 
         @Test
-        @DisplayName("addLast N elements – size and order correct")
-        void addLastNElements() {
-            for (int i = 0; i < N; i++) list.addLast(i);
+        @DisplayName("add N elements – size and order correct")
+        void addNElements() {
+            for (int i = 0; i < N; i++) list.add(i);
             assertThat(list.size()).isEqualTo(N);
             assertThat(list.toList()).first().isEqualTo(0);
             assertThat(list.toList()).last().isEqualTo(N - 1);
@@ -718,7 +718,7 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("remove all N elements – ends empty")
         void removeAllNElements() {
-            for (int i = 0; i < N; i++) list.addLast(i);
+            for (int i = 0; i < N; i++) list.add(i);
             for (int i = 0; i < N; i++) list.remove(i);
             assertThat(list.isEmpty()).isTrue();
         }
@@ -726,17 +726,17 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("reverse N-element list – O(n) operation completes, order correct")
         void reverseNElements() {
-            for (int i = 0; i < N; i++) list.addLast(i);
+            for (int i = 0; i < N; i++) list.add(i);
             list.reverse();
             assertThat(list.toList()).first().isEqualTo(N - 1);
             assertThat(list.toList()).last().isEqualTo(0);
         }
 
-        @ParameterizedTest(name = "size after {0} addLast calls")
+        @ParameterizedTest(name = "size after {0} add calls")
         @ValueSource(ints = {1, 10, 100, 1000})
         @DisplayName("parameterised – size grows correctly")
         void parameterisedSize(int n) {
-            for (int i = 0; i < n; i++) list.addLast(i);
+            for (int i = 0; i < n; i++) list.add(i);
             assertThat(list.size()).isEqualTo(n);
         }
     }
@@ -752,9 +752,9 @@ class DoubleLinkedListTest {
         @Test
         @DisplayName("String list operations work correctly")
         void stringListWorks() {
-            strList.addLast("alpha");
-            strList.addLast("beta");
-            strList.addLast("gamma");
+            strList.add("alpha");
+            strList.add("beta");
+            strList.add("gamma");
             strList.remove("beta");
             assertThat(strList.toList()).containsExactly("alpha", "gamma");
         }
@@ -764,7 +764,7 @@ class DoubleLinkedListTest {
         void doubleListWorks() {
             LinkedListOperations<Double> dList = new DoubleLinkedList<>();
             dList.addFirst(3.14);
-            dList.addLast(2.71);
+            dList.add(2.71);
             assertThat(dList.contains(3.14)).isTrue();
             assertThat(dList.size()).isEqualTo(2);
         }
