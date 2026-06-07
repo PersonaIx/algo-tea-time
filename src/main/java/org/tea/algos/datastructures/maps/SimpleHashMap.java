@@ -34,9 +34,9 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
 
     @Override
     public V get(K key) {
-        for (int i = 0; i < buckets.length; i++) {
-            if (hash(key) == buckets[i].hash) {
-                return buckets[i].value;
+        for (Node<K, V> bucket : buckets) {
+            if (hash(key) == bucket.hash) {
+                return bucket.value;
             }
         }
         return null;
