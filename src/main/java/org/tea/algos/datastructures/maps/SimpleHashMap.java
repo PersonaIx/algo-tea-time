@@ -12,9 +12,14 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
     private int capacity;
 
     public SimpleHashMap(int initialCapacity) {
-        capacity = initialCapacity;
+        if (initialCapacity <= 0) {
+            throw new IllegalArgumentException();
+        }
+
+        int adjustedCapacity = Integer.highestOneBit(initialCapacity) << 1;
+        this.capacity = adjustedCapacity;
         //noinspection unchecked
-        buckets = (Node<K, V>[]) new Node[capacity];
+        this.buckets = (Node<K, V>[]) new Node[capacity];
     }
 
     public SimpleHashMap() {
@@ -29,6 +34,11 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
 
     @Override
     public V get(K key) {
+        for (int i = 0; i < buckets.length; i++) {
+            if (hash(key) == buckets[i].hash) {
+                return buckets[i].value;
+            }
+        }
         return null;
     }
 
@@ -65,6 +75,10 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
 
     public int capacity() {
         return capacity;
+    }
+
+    private int hash(K key) {
+        return key.hashCode() & (capacity - 1);
     }
 
     private static class Node<K, V> {
