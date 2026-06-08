@@ -10,7 +10,7 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
     private static final float LOAD_FACTOR = 0.75f;
     public static final int INITIAL_CAPACITY = 16;
 
-    private Node<K, V>[] nodes;
+    private Node<K, V>[] buckets;
     private int size;
     private int capacity;
 
@@ -22,7 +22,7 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
         int adjustedCapacity = Integer.highestOneBit(initialCapacity) << 1;
         this.capacity = adjustedCapacity;
         //noinspection unchecked
-        this.nodes = (Node<K, V>[]) new Node[capacity];
+        this.buckets = (Node<K, V>[]) new Node[capacity];
     }
 
     public SimpleHashMap() {
@@ -32,29 +32,33 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
     @Override
     public V put(K key, V value) {
         int hash = hash(key);
-        if (capacity == size) {
+        if (size >= capacity * LOAD_FACTOR) {
             adjustCapacity();
         }
-        Node<K, V> node = findBucket(hash);
-        if (node != null) {
-            V oldValue = node.value;
-            node.value = value;
+        Node<K, V> existingNode = buckets[hash];
+        if (existingNode != null) {
+            Node<K, V> targetNode = findNode(existingNode, key);
+            if (targetNode == null) {
+                buckets[hash] = new Node<>(key, value, hash, buckets[hash]);
+                size++;
+                return value;
+            }
+            V oldValue = targetNode.value;
+            targetNode.value = value;
             return oldValue;
         }
-
+        buckets[hash] = new Node<>(key, value, hash, null);
         size++;
-        return null;
+        return value;
     }
 
     @Override
     public V get(K key) {
         int hash = hash(key);
-        for (Node<K, V> node : nodes) {
-            if (node != null) {
-                if (hash == node.hash) {
-                    return node.value;
-                }
-            }
+        Node<K, V> bucket = buckets[hash];
+        Node<K, V> node = findNode(bucket, key);
+        if (node != null) {
+            return node.value;
         }
         return null;
     }
@@ -62,17 +66,35 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
     @Override
     public V remove(K key) {
         int hash = hash(key);
-        size--;
+        if (buckets[hash] == null) {
+            return null;
+        }
+        if (buckets[hash].key.equals(key)) {
+            V oldValue = buckets[hash].value;
+            buckets[hash] = buckets[hash].next;
+            size--;
+            return oldValue;
+        }
+        Node<K, V> previous = buckets[hash];
+        Node<K, V> node = buckets[hash].next;
+        while (node != null) {
+            if (node.key.equals(key)) {
+                previous.next = node.next;
+                size--;
+                return node.value;
+            }
+            node = node.next;
+        }
         return null;
     }
 
     @Override
     public boolean containsKey(K key) {
         int hash = hash(key);
-        for (Node<K, V> node : nodes) {
-            if (node != null && hash == node.hash) {
-                return true;
-            }
+        Node<K, V> bucket = buckets[hash];
+        Node<K, V> node = findNode(bucket, key);
+        if (node != null) {
+            return true;
         }
         return false;
     }
@@ -85,7 +107,7 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
     @Override
     public void clear() {
         //noinspection unchecked
-        nodes = (Node<K, V>[]) new Node[INITIAL_CAPACITY];
+        buckets = (Node<K, V>[]) new Node[INITIAL_CAPACITY];
         capacity = INITIAL_CAPACITY;
         size = 0;
     }
@@ -93,7 +115,7 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
     @Override
     public Set<K> keySet() {
         Set<K> result = new HashSet<>();
-        for (Node<K, V> node : nodes) {
+        for (Node<K, V> node : buckets) {
             if (node != null) {
                 result.add(node.key);
             }
@@ -117,16 +139,15 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
 
     private void adjustCapacity() {
         capacity = capacity * 2;
-        this.nodes = Arrays.copyOf(nodes, capacity);
+        this.buckets = Arrays.copyOf(buckets, capacity);
     }
 
-    private Node<K, V> findBucket(int hash) {
-        for (Node<K, V> node : nodes) {
-            if (node != null) {
-                if (hash == node.hash) {
-                    return node;
-                }
+    private Node<K, V> findNode(Node<K, V> node, K key) {
+        while (node != null) {
+            if (node.key.equals(key)) {
+                return node;
             }
+            node = node.next;
         }
         return null;
     }
