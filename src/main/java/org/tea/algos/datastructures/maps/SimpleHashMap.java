@@ -1,9 +1,6 @@
 package org.tea.algos.datastructures.maps;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
 
@@ -19,7 +16,9 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
             throw new IllegalArgumentException();
         }
 
-        int adjustedCapacity = Integer.highestOneBit(initialCapacity) << 1;
+        int adjustedCapacity = Integer.bitCount(initialCapacity) == 1
+                ? initialCapacity
+                : Integer.highestOneBit(initialCapacity) << 1;
         this.capacity = adjustedCapacity;
         //noinspection unchecked
         this.buckets = (Node<K, V>[]) new Node[capacity];
@@ -49,7 +48,7 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
         }
         buckets[hash] = new Node<>(key, value, hash, null);
         size++;
-        return value;
+        return null;
     }
 
     @Override
@@ -113,20 +112,39 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
     }
 
     @Override
-    public Set<K> keySet() {
-        Set<K> result = new HashSet<>();
-        for (Node<K, V> node : buckets) {
-            if (node != null) {
-                result.add(node.key);
+    public SimpleMap.SimpleSet<K> keySet() {
+        return new SimpleMap.SimpleSet<K>() {
+            @Override
+            public boolean contains(K key) {
+                return containsKey(key);
             }
-        }
-        return result;
+
+            @Override
+            public int size() {
+                return size;
+            }
+
+            @Override
+            public Iterator<K> iterator() {
+                Iterator<Entry<K, V>> entryIterator = SimpleHashMap.this.iterator();
+                return new Iterator<>() {
+                    @Override
+                    public boolean hasNext() {
+                        return entryIterator.hasNext();
+                    }
+
+                    @Override
+                    public K next() {
+                        return entryIterator.next().key();
+                    }
+                };
+            }
+        };
     }
 
-    // need to implement my own iterator here, difficult?
     @Override
     public Iterator<Entry<K, V>> iterator() {
-        return null;
+        return new SimpleHashmapIterator();
     }
 
     public int capacity() {
@@ -164,6 +182,46 @@ public class SimpleHashMap<K, V> implements SimpleMap<K, V> {
             this.value = value;
             this.hash  = hash;
             this.next  = next;
+        }
+    }
+
+    private class SimpleHashmapIterator implements Iterator<Entry<K, V>> {
+        Node<K, V> currentNode;
+        int bucketNumber;
+
+        SimpleHashmapIterator() {
+            findNextBucketWithNode();
+        }
+
+
+        private void findNextBucketWithNode() {
+            while (bucketNumber < capacity && buckets[bucketNumber] == null) {
+                bucketNumber++;
+            }
+            currentNode = (bucketNumber < capacity) ? buckets[bucketNumber] : null;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return currentNode != null;
+        }
+
+        @Override
+        public Entry<K, V> next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            Node<K, V> result = currentNode;
+
+            if (currentNode.next != null) {
+                currentNode = currentNode.next;
+            } else {
+                // go to next bucket and start from there
+                bucketNumber++;
+                findNextBucketWithNode();
+            }
+            return new SimpleMap.Entry<>(result.key, result.value);
         }
     }
 }
