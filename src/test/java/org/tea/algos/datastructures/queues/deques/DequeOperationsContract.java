@@ -1,10 +1,11 @@
-package org.tea.algos.datastructures.deques;
+package org.tea.algos.datastructures.queues.deques;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.tea.algos.datastructures.queues.deques.DequeOperations;
 
 import java.util.List;
 import java.util.stream.IntStream;

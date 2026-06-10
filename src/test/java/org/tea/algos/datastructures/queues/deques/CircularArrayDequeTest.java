@@ -1,4 +1,4 @@
-package org.tea.algos.datastructures.deques;
+package org.tea.algos.datastructures.queues.deques;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
