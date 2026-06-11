@@ -41,22 +41,27 @@ public class HeapPriorityQueue<E extends Comparable<E>> implements PriorityQueue
         E currentElement = heap[currentIndex];
         while (true) {
             if (element.compareTo(currentElement) < 0) {
-                E temp = heap[prevIndex];
-                heap[prevIndex] = heap[currentIndex];
-                heap[currentIndex] = temp;
+                swap(prevIndex, currentIndex);
                 prevIndex = currentIndex;
+                // a bit ugly, having a mental block here
+                if (currentIndex == 0) {
+                    break;
+                }
                 currentIndex = (currentIndex - 1) / 2;
                 currentElement = heap[currentIndex];
             } else {
                 break;
             }
-            // a bit ugly, having a mental block here
-            if (currentIndex == 0) {
-                break;
-            }
+
         }
 
         size++;
+    }
+
+    private void swap(int prevIndex, int currentIndex) {
+        E temp = heap[prevIndex];
+        heap[prevIndex] = heap[currentIndex];
+        heap[currentIndex] = temp;
     }
 
     private void adjustCapacity() {
@@ -78,9 +83,43 @@ public class HeapPriorityQueue<E extends Comparable<E>> implements PriorityQueue
             throw new NoSuchElementException();
         }
         E min = heap[0];
+        heap[0] = heap[size - 1];
+        heap[size - 1] = null;
         size--;
-        // TODO: Need to think about it
+        fixHeap();
         return min;
+    }
+
+    private void fixHeap() {
+        int currentIndex = 0;
+        while (true) {
+            int smallestChildIndex = findSmallestChild(currentIndex);
+            if (smallestChildIndex == -1) {
+                break;
+            }
+            if (heap[currentIndex].compareTo(heap[smallestChildIndex]) < 0) {
+                break;
+            }
+            swap(currentIndex, smallestChildIndex);
+            currentIndex = smallestChildIndex;
+        }
+    }
+
+    private int findSmallestChild(int currentIndex) {
+        int leftIndex = currentIndex * 2 + 1;
+        int rightIndex = currentIndex * 2 + 2;
+
+        if (leftIndex >= size) {
+            return -1;
+        }
+        if (rightIndex >= size) {
+            return leftIndex;
+        }
+        if (heap[leftIndex].compareTo(heap[rightIndex]) <= 0) {
+            return leftIndex;
+        } else {
+            return rightIndex;
+        }
     }
 
     @Override

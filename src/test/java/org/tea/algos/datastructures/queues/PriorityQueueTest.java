@@ -211,11 +211,10 @@ class PriorityQueueTest {
             pq.insert(6);
             pq.insert(2);
             pq.insert(9);
-            assertThat(pq.extractMin()).isEqualTo(pq.peek() + 2 - 2); // non-destructive sanity form
-            // cleaner equivalent:
-            PriorityQueue<Integer> pq2 = new HeapPriorityQueue<>();
-            pq2.insert(6); pq2.insert(2); pq2.insert(9);
-            assertThat(pq2.peek()).isEqualTo(pq2.extractMin());
+
+            Integer peeked   = pq.peek();        // look without removing
+            Integer extracted = pq.extractMin(); // now remove
+            assertThat(peeked).isEqualTo(extracted);
         }
     }
 
