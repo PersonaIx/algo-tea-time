@@ -37,25 +37,27 @@ public class HeapPriorityQueue<E extends Comparable<E>> implements PriorityQueue
         }
         int prevIndex = size;
         heap[prevIndex] = element;
-        int currentIndex = (prevIndex - 1) / 2;
-        E currentElement = heap[currentIndex];
+        bubbleUp(prevIndex);
+
+        size++;
+    }
+
+    private void bubbleUp(int previousIndex) {
+        int currentIndex = (previousIndex - 1) / 2;
         while (true) {
-            if (element.compareTo(currentElement) < 0) {
-                swap(prevIndex, currentIndex);
-                prevIndex = currentIndex;
-                // a bit ugly, having a mental block here
+            if (heap[previousIndex].compareTo(heap[currentIndex]) < 0) {
+                swap(previousIndex, currentIndex);
+                previousIndex = currentIndex;
+                // a bit ugly
                 if (currentIndex == 0) {
                     break;
                 }
                 currentIndex = (currentIndex - 1) / 2;
-                currentElement = heap[currentIndex];
             } else {
                 break;
             }
 
         }
-
-        size++;
     }
 
     private void swap(int prevIndex, int currentIndex) {
@@ -86,12 +88,12 @@ public class HeapPriorityQueue<E extends Comparable<E>> implements PriorityQueue
         heap[0] = heap[size - 1];
         heap[size - 1] = null;
         size--;
-        fixHeap();
+        bubbleDown(0);
         return min;
     }
 
-    private void fixHeap() {
-        int currentIndex = 0;
+    private void bubbleDown(int start) {
+        int currentIndex = start;
         while (true) {
             int smallestChildIndex = findSmallestChild(currentIndex);
             if (smallestChildIndex == -1) {
@@ -124,7 +126,19 @@ public class HeapPriorityQueue<E extends Comparable<E>> implements PriorityQueue
 
     @Override
     public void changePriority(E element, E newElement) {
-
+        for (int i = 0; i < size; i++) {
+            if (heap[i].compareTo(element) == 0) {
+                if (newElement.compareTo(heap[i]) < 0) {
+                    heap[i] = newElement;
+                    bubbleUp(i);
+                } else {
+                    heap[i] = newElement;
+                    bubbleDown(i);
+                }
+                return;
+            }
+        }
+        throw new NoSuchElementException();
     }
 
     @Override
